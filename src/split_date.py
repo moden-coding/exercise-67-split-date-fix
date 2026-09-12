@@ -9,7 +9,9 @@ def split_date():
     pass
 
 def main():
-    split_date()
-       
+    df = split_date()
+    print("Shape: {}, {}".format(*df.shape))
+    print(df.head())
+
 if __name__ == "__main__":
     main()
