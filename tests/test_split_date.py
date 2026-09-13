@@ -5,25 +5,14 @@ from unittest.mock import patch
 import numpy as np
 import pandas as pd
 
-from tmc import points
+from src.split_date import split_date, main
 
-from tmc.utils import load, get_stdout, patch_helper
 
-module_name="src.split_date"
-split_date = load(module_name, "split_date")
-main = load(module_name, "main")
-ph = patch_helper(module_name)
-
-@points('p04-16.1')
 class SplitDate(unittest.TestCase):
 
-#    @classmethod
-#    def setUpClass(cls):
-#        cls.df = split_date()
-        
     def setUp(self):
         self.df = split_date()
-        
+
     def test_shape(self):
         self.assertEqual(self.df.shape, (37128, 5),
                          msg="The DataFrame has incorrect shape!")
@@ -38,12 +27,10 @@ class SplitDate(unittest.TestCase):
         for i, (result, correct) in enumerate(zip(self.df.dtypes, correct_types)):
             self.assertTrue(np.issubdtype(result, correct),
                             msg="Types don't match on column %i! Expected %s got %s." % (i, correct, result))
-        # np.testing.assert_array_equal(self.df.dtypes,
-        #                               [object, int, np.integer, int, int], err_msg="Incorrect column types")
-        
+
     def test_called(self):
-        with patch(ph("pd.read_csv"), wraps=pd.read_csv) as prc,\
-             patch(ph("split_date"), wraps=split_date) as psd:
+        with patch("src.split_date.pd.read_csv", wraps=pd.read_csv) as prc,\
+             patch("src.split_date.split_date", wraps=split_date) as psd:
             main()
             psd.assert_called()
 
@@ -62,4 +49,3 @@ class SplitDate(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
-    
